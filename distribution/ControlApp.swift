@@ -42,10 +42,10 @@ private final class Controls: ObservableObject {
             // A running agent may be terminated by unregister(). Protect update recovery.
             try FileManager.default.createDirectory(at: data, withIntermediateDirectories: true)
             let fd = open(data.appendingPathComponent("run.lock").path, O_CREAT | O_CLOEXEC | O_WRONLY, 0o600)
-            guard fd >= 0 else { throw ControlError(message: "更新ジョブの状態を確認できませんでした。") }
+            guard fd >= 0 else { throw ControlError(message: "Could not check the update service.") }
             defer { close(fd) }
             guard flock(fd, LOCK_EX | LOCK_NB) == 0, try readState()?.pending == nil else {
-                throw ControlError(message: "更新ジョブの処理中です。少し待ってから停止してください。")
+                throw ControlError(message: "An update check or restart is in progress. Wait a moment before disabling auto updates.")
             }
             try agent.unregister()
         }
@@ -90,7 +90,7 @@ private struct ControlView: View {
         VStack(alignment: .leading, spacing: 18) {
             Label("Codex Idle Update", systemImage: "arrow.clockwise")
                 .font(.title2.weight(.semibold))
-            Text("Codex の更新が準備できたら、作業の合間にアプリを開き直して適用します。")
+            Text("Applies prepared ChatGPT updates by reopening the app when Codex is idle.")
                 .foregroundStyle(.secondary)
 
             Divider()
@@ -104,10 +104,10 @@ private struct ControlView: View {
                         .textSelection(.enabled)
                 }
                 if controls.legacy {
-                    Text("この Mac では既存の自動更新ジョブが使われています。")
+                    Text("The existing background job handles auto updates on this Mac.")
                         .foregroundStyle(.secondary)
                 } else if !controls.compatible {
-                    Text("「アプリケーション」フォルダに対応する ChatGPT.app をインストールしてください。")
+                    Text("Install a compatible ChatGPT.app in the Applications folder.")
                         .foregroundStyle(.secondary)
                 }
                 if let error = controls.error {
@@ -116,16 +116,16 @@ private struct ControlView: View {
             }
 
             HStack {
-                Button("状態を更新") { controls.refresh() }
+                Button("Refresh Status") { controls.refresh() }
                 Spacer()
                 if !controls.legacy {
                     if controls.status == .requiresApproval {
-                        Button("システム設定を開く") { SMAppService.openSystemSettingsLoginItems() }
+                        Button("Open System Settings") { SMAppService.openSystemSettingsLoginItems() }
                     }
                     if controls.status == .enabled || controls.status == .requiresApproval {
-                        Button("自動更新を停止") { controls.disable() }
+                        Button("Disable Auto Updates") { controls.disable() }
                     } else {
-                        Button("自動更新を有効にする") { controls.enable() }
+                        Button("Enable Auto Updates") { controls.enable() }
                             .keyboardShortcut(.defaultAction)
                             .disabled(!controls.compatible || controls.status == .notFound)
                     }
@@ -141,13 +141,13 @@ private struct ControlView: View {
     }
 
     private var statusText: String {
-        if controls.legacy { return "既存のジョブを検出" }
+        if controls.legacy { return "Existing background job detected" }
         switch controls.status {
-        case .enabled: return "自動更新は有効です"
-        case .requiresApproval: return "バックグラウンド実行の許可待ち"
-        case .notRegistered: return "自動更新は停止中です"
-        case .notFound: return "自動更新サービスが見つかりません"
-        @unknown default: return "自動更新の状態を確認できません"
+        case .enabled: return "Auto updates are enabled"
+        case .requiresApproval: return "Waiting for permission to run in the background"
+        case .notRegistered: return "Auto updates are disabled"
+        case .notFound: return "Update service unavailable"
+        @unknown default: return "Update service status unknown"
         }
     }
 }

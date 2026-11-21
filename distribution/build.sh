@@ -27,9 +27,9 @@ cat > "$contents/Info.plist" <<'PLIST'
     <key>CFBundleName</key><string>Codex Idle Update</string>
     <key>CFBundleDisplayName</key><string>Codex Idle Update</string>
     <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleVersion</key><string>2</string>
-    <key>CFBundleShortVersionString</key><string>0.1.1</string>
-    <key>CFBundleDevelopmentRegion</key><string>ja</string>
+    <key>CFBundleVersion</key><string>3</string>
+    <key>CFBundleShortVersionString</key><string>0.1.2</string>
+    <key>CFBundleDevelopmentRegion</key><string>en</string>
     <key>LSMinimumSystemVersion</key><string>14.0</string>
 </dict>
 </plist>
