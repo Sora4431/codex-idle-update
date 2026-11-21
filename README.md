@@ -30,3 +30,7 @@ macOS 上の Xcode Command Line Tools でビルドします。出力先には新
 ```
 
 配布用にビルドする場合は `DEVELOPER_ID_APPLICATION` に署名 ID を指定します。公開前の公証は [Apple の配布手順](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution/)に従って行います。
+
+## ライセンス
+
+[MIT License](LICENSE)

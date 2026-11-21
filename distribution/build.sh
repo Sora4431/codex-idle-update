@@ -7,7 +7,8 @@ trap 'rm -rf "$scratch"' EXIT
 
 app="$scratch/Codex Idle Update.app"
 contents="$app/Contents"
-mkdir -p "$contents/MacOS" "$contents/Library/LaunchAgents"
+mkdir -p "$contents/MacOS" "$contents/Library/LaunchAgents" "$contents/Resources"
+cp "$source_dir/../LICENSE" "$contents/Resources/LICENSE"
 for arch in arm64 x86_64; do
     xcrun swiftc -O -parse-as-library -warnings-as-errors -target "$arch-apple-macosx14.0" \
         "$source_dir/../main.swift" -o "$scratch/worker-$arch"
@@ -26,8 +27,8 @@ cat > "$contents/Info.plist" <<'PLIST'
     <key>CFBundleName</key><string>Codex Idle Update</string>
     <key>CFBundleDisplayName</key><string>Codex Idle Update</string>
     <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleVersion</key><string>1</string>
-    <key>CFBundleShortVersionString</key><string>0.1.0</string>
+    <key>CFBundleVersion</key><string>2</string>
+    <key>CFBundleShortVersionString</key><string>0.1.1</string>
     <key>CFBundleDevelopmentRegion</key><string>ja</string>
     <key>LSMinimumSystemVersion</key><string>14.0</string>
 </dict>
